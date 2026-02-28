@@ -1,0 +1,28 @@
+{
+  "name": "vite-template-solid",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/tinycolor2": "^1.4.6",
+    "solid-devtools": "^0.34.3",
+    "typescript": "^5.7.2",
+    "vite": "^7.1.4",
+    "vite-plugin-solid": "^2.11.8"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "mixbox": "^2.0.0",
+    "solid-js": "^1.9.5",
+    "tailwindcss": "^4.2.1",
+    "tinycolor2": "^1.6.0",
+    "vanilla-colorful": "^0.7.2"
+  }
+}
