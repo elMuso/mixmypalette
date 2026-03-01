@@ -7,6 +7,16 @@ export interface RecipeItem extends Paint {
   parts: number;
 }
 
+export interface DetailedRecipeItem extends RecipeItem {
+  rgb: string;
+  lab: string;
+  hsl: string;
+  isDark: boolean;
+  displayParts: number;
+  percent: string;
+  stepIndex?: number;
+}
+
 export interface AppState {
   palette: Paint[];
   targetColor: string;

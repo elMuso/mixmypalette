@@ -2,19 +2,21 @@ import { For, createSignal, Show, createMemo } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useSharedState } from "./store";
 import { getNormalizedRecipe, getMixedHex } from "./mixer";
+import { DetailedRecipeItem } from "./types";
 
 export function RecipeDisplay() {
   const [state] = useSharedState();
-  const [selectedColor, setSelectedColor] = createSignal<any>(null);
+  const [selectedColor, setSelectedColor] =
+    createSignal<DetailedRecipeItem | null>(null);
 
   // Sort by volume (Base first)
-  const sortedRecipe = createMemo(() => {
+  const sortedRecipe = createMemo<DetailedRecipeItem[]>(() => {
     const normalized = getNormalizedRecipe(state.recipe);
     return [...normalized].sort((a, b) => b.parts - a.parts);
   });
 
   // Helper for step-wise mixing
-  const getMixOfRange = (endIndex: number) => {
+  const getMixOfRange = (endIndex: number): string => {
     const range = sortedRecipe().slice(0, endIndex + 1);
     if (range.length === 0) return "#000000";
     if (range.length === 1) return range[0].hex;
@@ -33,8 +35,8 @@ export function RecipeDisplay() {
             onClick={() =>
               setSelectedColor({
                 ...sortedRecipe()[0],
-                isFinalGoal: true,
                 hex: state.resultingColor,
+                stepIndex: -1,
               })
             }
             class="w-16 h-16 rounded-2xl shadow-xl border-2 border-white/20 relative overflow-hidden cursor-help"
@@ -68,9 +70,13 @@ export function RecipeDisplay() {
                   class="w-16 h-16 rounded-2xl shadow-xl border border-white/5 relative overflow-hidden flex items-center justify-center"
                   style={{ "background-color": item.hex }}
                 >
-                  <div class="z-10 bg-black/40 backdrop-blur-md w-8 h-8 rounded-full border border-white/20 flex items-center justify-center shadow-lg">
-                    <span class="text-[11px] font-black text-white">
+                  <div class="z-10 bg-black/40 backdrop-blur-md w-10 h-10 rounded-full text-center border border-white/20 flex items-center justify-center shadow-lg">
+                    <span class="text-[11px] font-black text-white m-2 leading-3">
                       {item.displayParts}
+                      <br />
+                      <span class="text-[8px]  font-light text-gray-100">
+                        {item.percent}
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -101,8 +107,8 @@ export function RecipeDisplay() {
                     class="flex-1 rounded-xl border border-white/5"
                     style={{
                       "background-color":
-                        selectedColor().stepIndex > 0
-                          ? getMixOfRange(selectedColor().stepIndex - 1)
+                        selectedColor()!.stepIndex! > 0
+                          ? getMixOfRange(selectedColor()!.stepIndex! - 1)
                           : "transparent",
                     }}
                   />
@@ -113,7 +119,7 @@ export function RecipeDisplay() {
                 <div class="flex flex-col gap-1">
                   <div
                     class="flex-1 rounded-xl border-2 border-white/20 shadow-lg"
-                    style={{ "background-color": selectedColor().hex }}
+                    style={{ "background-color": selectedColor()!.hex }}
                   />
                   <span class="text-[8px] text-center text-white uppercase font-bold">
                     Pigment
@@ -124,7 +130,7 @@ export function RecipeDisplay() {
                     class="flex-1 rounded-xl border border-white/5"
                     style={{
                       "background-color": getMixOfRange(
-                        selectedColor().stepIndex,
+                        selectedColor()!.stepIndex!,
                       ),
                     }}
                   />
@@ -141,20 +147,18 @@ export function RecipeDisplay() {
                 </h3>
                 <div class="text-sm text-slate-200">
                   <Show
-                    when={selectedColor().stepIndex === 0}
+                    when={selectedColor()!.stepIndex === 0}
                     fallback={
                       <span>
-                        Add{" "}
-                        <strong>{selectedColor().displayParts} units</strong> of{" "}
-                        {selectedColor().hex} to the previous mix to reach the
+                        Add <strong>{selectedColor()!.parts} units</strong> of{" "}
+                        {selectedColor()!.hex} to the previous mix to reach the
                         "New Mix" result.
                       </span>
                     }
                   >
                     <span>
-                      Start with{" "}
-                      <strong>{selectedColor().displayParts} units</strong> of{" "}
-                      {selectedColor().hex} as your base mother-color.
+                      Start with <strong>{selectedColor()!.parts} units</strong>{" "}
+                      of {selectedColor()!.hex} as your base mother-color.
                     </span>
                   </Show>
                 </div>
@@ -167,7 +171,7 @@ export function RecipeDisplay() {
                     Hex
                   </span>
                   <span class="text-xs font-mono text-white uppercase">
-                    {selectedColor().hex}
+                    {selectedColor()!.hex}
                   </span>
                 </div>
                 <div class="flex items-center justify-between bg-slate-950/30 px-3 ">
@@ -175,7 +179,7 @@ export function RecipeDisplay() {
                     RGB
                   </span>
                   <span class="text-xs font-mono text-white">
-                    {selectedColor().rgb}
+                    {selectedColor()!.rgb}
                   </span>
                 </div>
                 <div class="flex items-center justify-between bg-slate-950/30 px-3 ">
@@ -183,7 +187,7 @@ export function RecipeDisplay() {
                     Lab
                   </span>
                   <span class="text-xs font-mono text-white">
-                    {selectedColor().lab}
+                    {selectedColor()!.lab}
                   </span>
                 </div>
                 <div class="flex items-center justify-between bg-slate-950/30 px-3 ">
@@ -191,7 +195,7 @@ export function RecipeDisplay() {
                     Hsl
                   </span>
                   <span class="text-xs font-mono text-white">
-                    {selectedColor().hsl}
+                    {selectedColor()!.hsl}
                   </span>
                 </div>
               </div>

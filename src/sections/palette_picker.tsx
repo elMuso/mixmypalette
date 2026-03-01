@@ -34,7 +34,7 @@ export function PalettePicker() {
           {/* Add Button */}
           <button
             onClick={() => setState("palettePortalOpen", true)}
-            class="shrink-0 w-12 h-12 rounded-2xl border-2 border-dashed border-white/10 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all flex flex-col items-center justify-center group active:scale-95"
+            class="shrink-0 w-12 h-12 rounded-2xl border-2 border-dashed cursor-pointer border-white/10 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all flex flex-col items-center justify-center group active:scale-95"
           >
             <span class="text-xl text-slate-500 group-hover:text-blue-400 transition-colors">
               +

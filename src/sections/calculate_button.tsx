@@ -107,7 +107,7 @@ export function CalculateButton() {
           onPointerUp={handlePointerUp}
           onPointerMove={handlePointerMove}
           onContextMenu={(e) => e.preventDefault()}
-          class="h-16 w-36 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-300 flex flex-col items-center justify-center px-3 overflow-hidden relative border shadow-2xl active:scale-95 touch-none select-none"
+          class="h-16 w-36 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-300 flex flex-col items-center justify-center px-3 overflow-hidden relative border shadow-2xl active:scale-95 touch-none select-none  cursor-pointer"
           classList={{
             "bg-blue-600 border-blue-400/30 text-white shadow-blue-600/20":
               !state.calculating,
