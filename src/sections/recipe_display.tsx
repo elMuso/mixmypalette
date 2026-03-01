@@ -156,10 +156,22 @@ export function RecipeDisplay() {
                       </span>
                     }
                   >
-                    <span>
-                      Start with <strong>{selectedColor()!.parts} units</strong>{" "}
-                      of {selectedColor()!.hex} as your base mother-color.
-                    </span>
+                    {" "}
+                    <Show
+                      when={selectedColor()!.stepIndex === -1}
+                      fallback={
+                        <span>
+                          This is the expected result! Try to mix it in your
+                          palette
+                        </span>
+                      }
+                    >
+                      <span>
+                        Start with{" "}
+                        <strong>{selectedColor()!.parts} units</strong> of{" "}
+                        {selectedColor()!.hex} as your base mother-color.
+                      </span>
+                    </Show>
                   </Show>
                 </div>
               </div>
