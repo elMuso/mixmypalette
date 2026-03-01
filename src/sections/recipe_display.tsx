@@ -1,8 +1,8 @@
 import { For, createSignal, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useSharedState } from "./store";
-import tinycolor from "tinycolor2";
 import { rgbToXyz, xyzToLab } from "./color_conversion"; // Adjust path as needed
+import { getData, getNormalizedRecipe } from "./mixer";
 
 // Helper to simplify the recipe for the human eye
 export const getGCD = (numbers: number[]): number => {
@@ -15,40 +15,27 @@ export function RecipeDisplay() {
   const [state] = useSharedState();
   const [selectedColor, setSelectedColor] = createSignal<any>(null);
 
-  // Derive the human-friendly recipe
-  const normalizedRecipe = () => {
-    const activeItems = state.recipe.filter((item) => item.parts > 0);
-    if (activeItems.length === 0) return [];
-
-    const partsArray = activeItems.map((item) => item.parts);
-    const commonFactor = getGCD(partsArray);
-
-    return activeItems.map((item) => {
-      const color = tinycolor(item.hex);
-      const rgb = color.toRgb();
-      const lab = xyzToLab(rgbToXyz(rgb));
-
-      return {
-        ...item,
-        displayParts: item.parts / commonFactor,
-        // Expanded Info for Portal
-        rgb: `${rgb.r}, ${rgb.g}, ${rgb.b}`,
-        hsl: color.toHslString(),
-        lab: `L:${lab.l.toFixed(1)} a:${lab.a.toFixed(1)} b:${lab.b.toFixed(1)}`,
-        isDark: color.isDark(),
-      };
-    });
-  };
-
   return (
-    <div class="w-full">
-      <div class="flex items-end space-x-3 overflow-x-auto pb-4 scrollbar-hide px-2">
+    <div class="w-full h-36">
+      <div class="flex items-end h-full w-full space-x-3 overflow-x-auto pb-4 scrollbar-hide px-2">
         {/* RESULT SECTION */}
         <div class="shrink-0 flex flex-col items-center gap-2">
           <span class="text-[9px] font-black uppercase tracking-[0.15em] text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-md mb-1">
             Result
           </span>
           <div
+            onClick={() =>
+              setSelectedColor(
+                getData(
+                  {
+                    id: "result",
+                    hex: state.resultingColor,
+                    parts: 1,
+                  },
+                  0,
+                ),
+              )
+            }
             class="w-16 h-16 rounded-2xl shadow-xl border-2 border-white/20 relative overflow-hidden group cursor-help"
             style={{ "background-color": state.resultingColor }}
           >
@@ -65,7 +52,7 @@ export function RecipeDisplay() {
 
         {/* MIX SECTION */}
         <div class="flex items-center gap-3">
-          <For each={normalizedRecipe()}>
+          <For each={getNormalizedRecipe(state.recipe)}>
             {(item, index) => (
               <div
                 onClick={() => setSelectedColor(item)}
@@ -112,19 +99,37 @@ export function RecipeDisplay() {
               onClick={(e) => e.stopPropagation()}
             >
               <div
-                class="w-full h-40 rounded-3xl mb-6 shadow-inner border border-white/10 relative flex items-center justify-center"
+                class="w-full h-40 rounded-3xl mb-6 shadow-inner border border-white/10 relative flex items-center justify-center transition-colors duration-500"
                 style={{ "background-color": selectedColor().hex }}
               >
-                <div class="bg-black/60 backdrop-blur-lg px-4 py-2 rounded-2xl border border-white/20 flex flex-col items-center">
-                  <span class="text-white font-black text-3xl leading-none">
+                {/* Dynamic Badge: Black blur for light colors, White blur for dark colors */}
+                <div
+                  class="backdrop-blur-lg px-4 py-2 rounded-2xl border flex flex-col items-center transition-all duration-300"
+                  classList={{
+                    "bg-black/60 border-white/20": !selectedColor().isDark,
+                    "bg-white/60 border-black/20": selectedColor().isDark,
+                  }}
+                >
+                  <span
+                    class="font-black text-3xl leading-none transition-colors"
+                    classList={{
+                      "text-white": !selectedColor().isDark,
+                      "text-black": selectedColor().isDark,
+                    }}
+                  >
                     {selectedColor().displayParts}
                   </span>
-                  <span class="text-[9px] text-white/50 uppercase font-bold tracking-widest">
+                  <span
+                    class="text-[9px] uppercase font-bold tracking-widest transition-colors"
+                    classList={{
+                      "text-white/50": !selectedColor().isDark,
+                      "text-black/50": selectedColor().isDark,
+                    }}
+                  >
                     Parts in Mix
                   </span>
                 </div>
               </div>
-
               <div class="space-y-4 mb-8">
                 <div>
                   <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">
@@ -163,7 +168,6 @@ export function RecipeDisplay() {
                   </p>
                 </div>
               </div>
-
               <button
                 onClick={() => setSelectedColor(null)}
                 class="w-full py-4 bg-white text-black rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] active:scale-95 transition-all shadow-lg"

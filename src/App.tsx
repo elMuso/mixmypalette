@@ -146,16 +146,11 @@ export default function App() {
           if (testTotalParts < parent.totalParts) {
             shouldAdopt = true;
           }
-        } else if (state.precisionMode && testMatch > 95) {
-          // 3. THE "SIMPLIFIER" LEAP:
-          // If we have a very high match (95%+), occasionally allow
-          // a slightly worse match (up to 1% drop) IF it cuts the part count in half.
-          // This allows the algorithm to "escape" heavy, complex recipes.
+        } else if (testMatch > 95) {
           const matchDrop = parent.match - testMatch;
           const partsSaved = parent.totalParts - testTotalParts;
 
-          if (matchDrop < 20 && partsSaved > parent.totalParts * 0.3) {
-            // 5% chance to allow a "simplification step" back
+          if (matchDrop < 40 && partsSaved > parent.totalParts * 0.3) {
             if (Math.random() > 0.95) shouldAdopt = true;
           }
         }
@@ -215,20 +210,13 @@ export default function App() {
   });
   return (
     <SharedStateContext.Provider value={[state, setState]}>
-      <div class="flex flex-col h-screen bg-slate-800 text-slate-100 font-sans overflow-hidden">
-        {/* Main Content Area: Scrollable */}
-        <main class="flex-1 overflow-y-auto scrollbar-hide">
-          <PalettePicker />
-          <ColorPicker />
-        </main>
-
-        {/* Footer: Fixed at bottom */}
-        <footer class="shrink-0 px-6 py-4 bg-slate-950/80 backdrop-blur-xl border-t border-white/5 shadow-[0_-10px_50px_rgba(0,0,0,0.5)]">
-          <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-6">
-            <CalculateButton />
-            <RecipeDisplay />
-          </div>
-        </footer>
+      <div class="flex flex-col h-screen bg-slate-800 text-slate-100 font-sans overflow-auto">
+        <PalettePicker />
+        <ColorPicker />
+        <div class="flex flex-col landscape:flex-row-reverse w-full lg:max-w-3/4 lg:self-center">
+          <CalculateButton />
+          <RecipeDisplay />
+        </div>
       </div>
       <ConfirmPortal />
     </SharedStateContext.Provider>

@@ -18,8 +18,7 @@ export function ColorPicker() {
   };
 
   return (
-    // Grow allows it to take space in the parent flex, but we don't force a height here
-    <section class="w-full flex-1 flex flex-col items-center">
+    <section class="w-full flex-1 flex flex-col items-center overflow-hidden p-2 sm:p-4 min-h-75 sm:min-h-112.5">
       <input
         type="file"
         ref={fileInput}
@@ -27,8 +26,7 @@ export function ColorPicker() {
         accept="image/*"
         onChange={handleImageUpload}
       />
-      <div class="flex flex-col w-full max-w-5xl bg-slate-800/30 p-4 sm:p-8 rounded-4xl border border-slate-800 shadow-2xl overflow-hidden min-h-112.5">
-        {/* TOOLBAR */}
+      <div class="flex flex-col w-full max-w-5xl bg-slate-800/30 p-4 sm:p-8 rounded-4xl border border-slate-800 shadow-2xl overflow-hidden flex-1 h-full ">
         <div class="flex-none flex flex-row items-center justify-between w-full mb-4 px-2">
           <div class="flex gap-2">
             <Show
@@ -83,12 +81,7 @@ export function ColorPicker() {
             />
           </div>
         </div>
-
-        {/* DISPLAY AREA
-            - aspect-video is safe here because it's inside a flex-col with no hard height.
-            - It will grow to 16:9 width but respect the container's max-width.
-        */}
-        <div class="w-full aspect-video min-h-75 bg-slate-950 rounded-3xl border-2 border-slate-800 overflow-hidden relative">
+        <div class="w-full flex-1 bg-slate-950 rounded-3xl border-2 border-slate-800 overflow-hidden relative min-h-0">
           <Show
             when={state.imageRef}
             fallback={

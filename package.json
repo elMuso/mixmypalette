@@ -22,7 +22,6 @@
     "mixbox": "^2.0.0",
     "solid-js": "^1.9.5",
     "tailwindcss": "^4.2.1",
-    "tinycolor2": "^1.6.0",
     "vanilla-colorful": "^0.7.2"
   }
 }

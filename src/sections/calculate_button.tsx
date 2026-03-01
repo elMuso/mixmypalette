@@ -83,7 +83,7 @@ export function CalculateButton() {
   });
 
   return (
-    <div class="flex flex-col h-full self-center items-center gap-3 shrink-0 select-none">
+    <div class="flex flex-row-reverse landscape:flex-col h-24 self-center items-center gap-3 shrink-0 select-none landscape:min-w-46">
       {/* Accuracy Badge */}
       <Show when={state.calculating || Number(matchPercentage()) > 0}>
         <div
@@ -107,7 +107,7 @@ export function CalculateButton() {
           onPointerUp={handlePointerUp}
           onPointerMove={handlePointerMove}
           onContextMenu={(e) => e.preventDefault()}
-          class="h-16 w-full md:w-44 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-300 flex flex-col items-center justify-center px-6 overflow-hidden relative border shadow-2xl active:scale-95 touch-none select-none"
+          class="h-16 w-36 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-300 flex flex-col items-center justify-center px-3 overflow-hidden relative border shadow-2xl active:scale-95 touch-none select-none"
           classList={{
             "bg-blue-600 border-blue-400/30 text-white shadow-blue-600/20":
               !state.calculating,

@@ -19,22 +19,22 @@ export function hexToRgb(hex: string): RGB {
 }
 
 export function rgbToLab(rgb: RGB): LAB {
-  let { r, g, b } = rgb;
-  r /= 255;
-  g /= 255;
-  b /= 255;
+  let r = rgb.r / 255,
+    g = rgb.g / 255,
+    b = rgb.b / 255;
 
-  r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-  g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-  b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+  // High-precision sRGB to Linear
+  r = r <= 0.04045 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+  g = g <= 0.04045 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+  b = b <= 0.04045 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
 
-  // Observer = 2°, Illuminant = D65
-  const x = (r * 0.4124 + g * 0.3576 + b * 0.1805) * 100;
-  const y = (r * 0.2126 + g * 0.7152 + b * 0.0722) * 100;
-  const z = (r * 0.0193 + g * 0.1192 + b * 0.9505) * 100;
+  // High-precision D65 Matrix
+  const x = (r * 0.4124564 + g * 0.3575761 + b * 0.1804375) * 100;
+  const y = (r * 0.2126729 + g * 0.7151522 + b * 0.072175) * 100;
+  const z = (r * 0.0193339 + g * 0.119192 + b * 0.9503041) * 100;
 
   const f = (t: number) =>
-    t > 0.008856 ? Math.pow(t, 1 / 3) : 7.787 * t + 16 / 116;
+    t > 0.008856451 ? Math.pow(t, 1 / 3) : 7.787037 * t + 16 / 116;
 
   return {
     l: 116 * f(y / 100) - 16,
